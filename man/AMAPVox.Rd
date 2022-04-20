@@ -6,15 +6,10 @@
 \alias{AMAPVox-package}
 \title{AMAPVox package}
 \description{
-The package provides a a set of R functions for reading, manipulating and
-writing voxel spaces. Voxel spaces are read from text-based output files of
-the \url{https://amap-dev.cirad.fr/projects/amapvox}{AMAPVox software}.
-}
-\details{
-As of version 0.1, available functions are limited and rudimentary, basically
-read/write voxel space. With time the package will include functions to
-launch full GUI tool from R and a set of useful pre/post-processing
-functions.
+The package provides a a set of R functions for working with voxel spaces
+(read, write, plot, etc.).
+Voxel spaces are read from text-based output files of the
+\href{https://amap-dev.cirad.fr/projects/amapvox}{AMAPVox software}.
 }
 \section{References}{
  \itemize{ \item{ Research paper first describing
@@ -35,7 +30,7 @@ AMAPVox 1.7", \doi{10.23708/1AJNMP}, DataSuds, V1 } }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/umr-amap/AMAPVox}
+  \item \url{https://amapvox.org}
   \item Report bugs at \url{https://github.com/umr-amap/AMAPVox/issues}
 }
 

@@ -1,13 +1,9 @@
 #' AMAPVox package
 #'
-#' The package provides a a set of R functions for reading, manipulating and
-#' writing voxel spaces. Voxel spaces are read from text-based output files of
-#' the \url{https://amap-dev.cirad.fr/projects/amapvox}{AMAPVox software}.
-#'
-#' As of version 0.1, available functions are limited and rudimentary, basically
-#' read/write voxel space. With time the package will include functions to
-#' launch full GUI tool from R and a set of useful pre/post-processing
-#' functions.
+#' The package provides a a set of R functions for working with voxel spaces
+#' (read, write, plot, etc.).
+#' Voxel spaces are read from text-based output files of the
+#' \href{https://amap-dev.cirad.fr/projects/amapvox}{AMAPVox software}.
 #'
 #' @section References: \itemize{ \item{ Research paper first describing
 #'   AMAPVox:\cr Vincent, G., Antin, C., Laurans, M., Heurtebize, J., Durrieu,
@@ -29,7 +25,16 @@
 #'
 #' @importFrom methods callGeneric is new show
 #' @importFrom utils write.table
-#' @importFrom data.table fread
+#' @importFrom data.table data.table fread merge.data.table := .SD
 #' @importFrom stringr str_match str_trim str_squish str_starts str_split
-#'   str_remove_all
+#'   str_remove_all str_extract
+#' @importFrom dplyr %>%
+#' @importFrom rvest read_html html_element html_nodes html_attr
+#' @importFrom rappdirs user_data_dir
+#' @importFrom curl nslookup
+#' @importFrom stats dbeta weighted.mean
+# commented since these packages are suggested instead of requested
+# @importFrom rgl par3d plot3d bgplot3d
+# @importFrom ggplot2 ggplot aes ggtitle geom_line xlab ylab
+# @importFrom RANN nn2
 "_PACKAGE"
