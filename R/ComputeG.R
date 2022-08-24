@@ -63,7 +63,7 @@ leafAngleDistribution = c("planophile",
 #' all(computeG(theta = runif(10, 0, pi/2)) == 0.5) # returns TRUE
 #' # ellipsoidal distribution
 #' computeG(theta = runif(10, 0, pi/2), pdf = "ellipsoidal", chi = 0.6)
-#' @seealso [AMAPVox::plotG()]
+#' @seealso [plotG()] for plotting G(theta) profiles
 #' @export
 computeG <- function(theta, pdf = "spherical", chi, mu, nu,
                      with.lut = length(theta) > 100, lut.precision = 0.001) {
@@ -75,12 +75,10 @@ computeG <- function(theta, pdf = "spherical", chi, mu, nu,
 
   if (with.lut & lut.precision > 0) {
     theta.lut <- seq(0, pi / 2, by = lut.precision)
-    lut <- computeG(theta.lut, pdf, chi, mu, nu,
-                      with.lut = FALSE)
-    theta.round <- round(theta / lut.precision) * lut.precision
-    theta.round[theta.round > max(theta.lut)] <- max(theta.lut)
-    return ( lut[sapply(theta.round, function(t) which(theta.lut == t))] )
-
+    lut <- computeG(theta.lut, pdf, chi, mu, nu, with.lut = FALSE)
+    ind <- round(theta / lut.precision) + 1
+    ind[ind > length(lut)] <- length(lut)
+    return ( lut[ind] )
   } else {
     return ( sapply(theta, computeGtheta, pdf, chi, mu, nu) )
   }

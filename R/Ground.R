@@ -3,7 +3,7 @@
 #' @docType methods
 #' @rdname ground
 #'
-#' @description Extract ground layer from \code{\link{VoxelSpace-class}} object.
+#' @description Extract ground layer from [`VoxelSpace-class`] object.
 #'
 #' ## Ground layer
 #'
@@ -32,10 +32,10 @@
 #' provided as a check function, to make sure that AMAPVox
 #' *digital elevation model* is consistent with the one provided in input.
 #'
-#' @return [data.table::data.table-class] object with voxel index either
+#' @return [`data.table::data.table-class`] object with voxel index either
 #' below ground, ground level or above ground.
 #'
-#' @param vxsp a \code{\link{VoxelSpace-class}} object.
+#' @param vxsp a [`VoxelSpace-class`] object.
 #'
 #' @examples
 #' vxsp <- readVoxelSpace(system.file("extdata", "tls_sample.vox", package = "AMAPVox"))
@@ -113,7 +113,8 @@ groundEnergy <- function(vxsp) {
 
   # ground energy
   i <- j <- k <- bsEntering <- bsPotential <- NULL # trick to avoid "no visible binding" note
-  vxsp@data[ground, list(i, j, ground_energy=bsEntering / bsPotential),
+  vxsp@data[ground,
+            list(i, j, ground_energy=bsEntering / bsPotential),
             on=list(i, j, k)]
 }
 
@@ -125,8 +126,10 @@ groundElevation <- function(vxsp) {
   ground <- ground(vxsp)
 
   # ground elevation
-  dem <- vxsp@data[ground, c("i", "j")]
-  dem[["ground_elevation"]] <- getPosition(vxsp, vxsp@data[ground])[["z"]]
+  i <- j <- k <- NULL # trick to avoid "no visible binding" note
+  dem <- vxsp@data[ground, list(i, j), on = list(i, j, k)]
+  dem[["ground_elevation"]] <- getPosition(vxsp,
+                                           vxsp@data[ground, on=list(i, j, k)])[["z"]]
 
   return (dem)
 }

@@ -11,14 +11,15 @@ setMethod("clear", signature(vxsp="VoxelSpace", vx="data.table"),
                              "attenuation_FPL_biasedMLE",
                              "attenuation_FPL_biasCorrection",
                              "attenuation_PPL_MLE")
+            i <- j <- k <- NULL # trick to avoid "no visible binding" note
             for (var in var.cleared) {
               if (var %in% names(vxsp)) {
-                vxsp@data[vx, (var):=0]
+                vxsp@data[vx, (var):=0, on=list(i, j, k)]
               }
             }
             # special case for transmittance, set to 1
             if ("transmittance" %in% names(vxsp)) {
-              vxsp@data[vx, ("transmittance"):= 1]
+              vxsp@data[vx, ("transmittance"):= 1, on=list(i, j, k)]
             }
 
           })
@@ -62,13 +63,15 @@ setMethod("clear", signature(vxsp="VoxelSpace", vx="matrix"),
 #' @docType methods
 #' @rdname toRaster
 #'
-#' @description Converts a voxel space (i, j) layer into a [terra::SpatRaster-class] object.
+#' @description Converts a voxel space (i, j) layer into a
+#' [`terra::SpatRaster-class`] object.
 #'
-#' @param vxsp a \code{\link{VoxelSpace-class}} object.
-#' @param vx a voxel space horizontal slice. A data.table with `i, j` columns and
-#' least one additional variable, the value of the raster layer. Every column beside i and j will be converted into a raster layer.
+#' @param vxsp a [`VoxelSpace-class`] object.
+#' @param vx a voxel space horizontal slice. A data.table with `i, j` columns
+#' and least one additional variable, the value of the raster layer. Every
+#' column beside i and j will be converted into a raster layer.
 #'
-#' @return A [terra::SpatRaster-class] object.
+#' @return a [`terra::SpatRaster-class`] object.
 #'
 #' @examples
 #' \dontrun{
@@ -117,12 +120,12 @@ toRaster <- function(vxsp, vx) {
   # layers name
   layers.name <- colnames(vx)[! colnames(vx) %in% c("i", "j")]
 
-  nx <- dim(vxsp)["x"]
-  ny <- dim(vxsp)["y"]
-  xmin <- AMAPVox::getMinCorner(vxsp)["x"]
-  ymin <- AMAPVox::getMinCorner(vxsp)["y"]
-  xmax <- AMAPVox::getMaxCorner(vxsp)["x"]
-  ymax <- AMAPVox::getMaxCorner(vxsp)["y"]
+  nx <- dim(vxsp)[1]
+  ny <- dim(vxsp)[2]
+  xmin <- AMAPVox::getMinCorner(vxsp)[1]
+  ymin <- AMAPVox::getMinCorner(vxsp)[2]
+  xmax <- AMAPVox::getMaxCorner(vxsp)[1]
+  ymax <- AMAPVox::getMaxCorner(vxsp)[2]
 
   # terra::raster and AMAPVox voxel space does not have same convention for
   # plot origin, so reorder cell index
@@ -133,7 +136,7 @@ toRaster <- function(vxsp, vx) {
 
   # loop on layers
   for (layer.name in layers.name) {
-    layer <- rep(NA, length.out <- nx * ny)
+    layer <- rep(NA, length.out = nx * ny)
     layer[ind] <- vx[[layer.name]]
     r[[layer.name]] <- terra::rast(nrows = ny, ncols = nx,
                 xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax,
@@ -149,45 +152,45 @@ toRaster <- function(vxsp, vx) {
 #' @docType methods
 #' @rdname merge
 #'
-#' @description Merge of two \code{\link{VoxelSpace-class}} object.
+#' @description Merge of two [`VoxelSpace-class`] object.
 #'   Voxel spaces must have same sptial extension and resolution, and some
 #'   shared column names.
 #'
 #'   ## Merging modes
 #'
-#'   Variables \code{i, j, k & ground_distance} are merged.
+#'   Variables `i, j, k & ground_distance` are merged.
 #'
-#'   Variables \code{nbEchos, nbSampling, lgTotal, bsEntering, bsIntercepted,
-#'   bsPotential, weightedEffectiveFreepathLength & weightedFreepathLength}
+#'   Variables `nbEchos, nbSampling, lgTotal, bsEntering, bsIntercepted,
+#'   bsPotential, weightedEffectiveFreepathLength & weightedFreepathLength`
 #'   are summed-up.
 #'
-#'   Variables \code{sdLength, angleMean and distLaser} are weighted means with
-#'   \code{nbSampling} (the number of pulses) as weights.
+#'   Variables `sdLength, angleMean and distLaser` are weighted means with
+#'   `nbSampling` (the number of pulses) as weights.
 #'
-#'   Attenuation FPL variables \code{(attenuation_FPL_biasedMLE,
-#'   attenuation_FPL_biasCorrection, attenuation_FPL_unbiasedMLE) & lMeanTotal}
+#'   Attenuation FPL variables (`attenuation_FPL_biasedMLE,
+#'   attenuation_FPL_biasCorrection, attenuation_FPL_unbiasedMLE) & lMeanTotal`
 #'   are calculated analytically.
 #'
 #'   Transmittance and attenuation variables (except the FPL attenuation
 #'   variables listed above) are weighted means with bsEntering as weights.
 #'
 #'   Any other variables will not be merged. In particular PAD variables
-#'   are not merged and should be recalculated with [AMAPVox::plantAreaDensity]
-#'   on the merged voxel space.
-#'   E.g: \code{vxsp <- plantAreaDensity(merge(vxsp1, vxsp2))}
+#'   are not merged and should be recalculated with
+#'   [plantAreaDensity()] on the merged voxel space.
+#'   E.g:`vxsp <- plantAreaDensity(merge(vxsp1, vxsp2))`
 #'
 #'   ## Merging multiple voxel spaces
 #'
 #'   Merging several voxel spaces works as follow : vxsp1 and vxsp2 merged
-#'   into vxsp12. vxsp12 & vxsp3 merged into vxsp123, etc. THe process can be
-#'   syntethized with the [base::Reduce] function.
+#'   into vxsp12. vxsp12 & vxsp3 merged into vxsp123, etc. The process can be
+#'   synthesized with the [Reduce()] function.
 #'   ```r
 #'   vxsp <- Reduce(merge, list(vxsp1, vxsp2, vxsp3))
 #'   ```
 #'
-#' @param x,y \code{\link{VoxelSpace-class}} objects to be merged.
+#' @param x,y [`VoxelSpace-class`] objects to be merged.
 #' @param ... Not used
-#' @return A merged \code{\link{VoxelSpace-class}} object.
+#' @return A merged [`VoxelSpace-class`] object.
 #'
 #' @examples
 #' # merge same voxel space to confirm merging behavior

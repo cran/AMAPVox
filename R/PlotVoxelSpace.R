@@ -5,9 +5,10 @@
 #' sampling intensity but the user can choose any variable available in the
 #' voxel file.
 #'
-#' @description plot a \code{\link{VoxelSpace-class}} object.
+#' @description plot a [`VoxelSpace-class`] object.
 #' @param x the object of class VoxelSpace to plot
-#' @param y Unused (inherited from R base)
+#' @param y a subset of voxel index. A data.table with `i, j, k` columns.
+#'   Missing parameter means whole voxel space.
 #' @param variable.name character, the name of the variable to plot
 #' @param palette character, a valid palette name (one of hcl.pals())
 #' @param bg.color character, a valid background color name (one of colors())
@@ -15,10 +16,9 @@
 #' @param voxel.size numeric, the size of voxel in pixels
 #' @param unsampled.discard logical, whether to discard unsampled voxel
 #' @param empty.discard logical, whether to discard empty voxel (no hit)
-#' @param ... additional parameters which will be passed to
-#'   \code{\link[rgl]{plot3d}}.
+#' @param ... additional parameters which will be passed to [rgl::plot3d()].
 #' @include Classes.R
-#' @seealso \code{\link[rgl]{plot3d}}
+#' @seealso [rgl::plot3d()]
 #' @examples
 #' \dontrun{
 #' # load a voxel file
@@ -27,6 +27,8 @@
 #' plot(vxsp)
 #' # plot PAD
 #' plot(vxsp, variable.name = "PadBVTotal", palette = "YlOrRd")
+#' # plot a subset
+#' plot(vxsp, vxsp@data[k > 4, .(i, j, k)])
 #' }
 #' @export
 #' @method plot VoxelSpace
@@ -36,6 +38,25 @@ standardGeneric("plot"))
 #' @rdname plot
 setMethod("plot",
           signature(x = "VoxelSpace", y = "missing"),
+          function(x, y, variable.name = "nbSampling",
+                   palette = "viridis", bg.color = "lightgrey",
+                   width = 640, voxel.size = 5,
+                   unsampled.discard = TRUE, empty.discard = TRUE,
+                   ...) {
+            i <- j <- k <- NULL
+            return (
+              callGeneric(x, x@data[, list(i, j, k)],
+                          variable.name = variable.name,
+                          palette = palette, bg.color = bg.color,
+                          width = width, voxel.size = voxel.size,
+                          unsampled.discard = unsampled.discard,
+                          empty.discard = empty.discard,
+                          ...))
+          })
+
+#' @rdname plot
+setMethod("plot",
+          signature(x = "VoxelSpace", y = "data.table"),
           function(x, y, variable.name = "nbSampling",
                            palette = "viridis", bg.color = "lightgrey",
                            width = 640, voxel.size = 5,
@@ -53,8 +74,9 @@ setMethod("plot",
   }
   # must be a voxel space
   stopifnot(is.VoxelSpace(x))
-  # y not used
-  stopifnot(missing(y))
+  # y must be data.table with i, j, k columns
+  stopifnot(any(class(y) == "data.table"))
+  stopifnot(c("i", "j", "k") %in% names(y))
   # make sure variable exists
   stopifnot(variable.name %in% colnames(x@data))
   # make sure variable nbSampling exists if discard unsampled voxel is TRUE
@@ -63,7 +85,8 @@ setMethod("plot",
   stopifnot(empty.discard | ('nbEchos' %in% colnames(x@data)))
 
   # discard empty voxels
-  vx <- x@data
+  i <- j <- k <- NULL # trick to get rid of R CMD check warning with data.table
+  vx <- x@data[y, on=list(i, j, k)]
   nbSampling <- nbEchos <- NULL # due to NSE notes in R CMD check
   if (unsampled.discard) vx <- vx[nbSampling > 0]
   if (empty.discard) vx <- vx[nbEchos > 0]

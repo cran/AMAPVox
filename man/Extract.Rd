@@ -5,7 +5,6 @@
 \alias{$,VoxelSpace-method}
 \alias{[[,VoxelSpace,ANY,missing-method}
 \alias{$<-,VoxelSpace-method}
-\alias{[[<-,VoxelSpace,ANY,missing,ANY-method}
 \alias{[[<-,VoxelSpace,ANY,missing-method}
 \title{Extract or Replace Parts of a VoxelSpace Object}
 \usage{
@@ -15,12 +14,12 @@
 
 \S4method{$}{VoxelSpace}(x, name) <- value
 
-\S4method{[[}{VoxelSpace,ANY,missing,ANY}(x, i, j) <- value
+\S4method{[[}{VoxelSpace,ANY,missing}(x, i, j) <- value
 
 \S4method{$}{VoxelSpace}(x, name) <- value
 }
 \arguments{
-\item{x}{A \code{VoxelSpace} object}
+\item{x}{a \code{\linkS4class{VoxelSpace}} object}
 
 \item{name}{A literal character string or a name (possibly backtick quoted).}
 
@@ -33,7 +32,7 @@
 \item{value}{typically an array-like R object of a similar class as x.}
 }
 \description{
-Operators acting on \code{VoxelSpace} object. If user attempts
+Operators acting on \code{\linkS4class{VoxelSpace}} object. If user attempts
 }
 \examples{
 # load a voxel file

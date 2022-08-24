@@ -15,10 +15,10 @@ knitr::opts_chunk$set(
 library(AMAPVox)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  AMAPVox::gui()
+#  AMAPVox::run()
 
 ## -----------------------------------------------------------------------------
-? AMAPVox::gui # section "Java 1.8 64-Bit with JavaFX"
+? AMAPVox::run # section "Java 1.8 64-Bit with JavaFX"
 
 ## -----------------------------------------------------------------------------
 AMAPVox::getRemoteVersions()
@@ -26,7 +26,7 @@ AMAPVox::getRemoteVersions()
 ## ----eval=FALSE---------------------------------------------------------------
 #  AMAPVox::installVersion("1.7.6")
 #  # install and run specific version
-#  AMAPVox::gui("1.6.4", check.update = FALSE)
+#  AMAPVox::run("1.6.4", check.update = FALSE)
 
 ## -----------------------------------------------------------------------------
 AMAPVox::getLocalVersions()
