@@ -12,7 +12,7 @@ versionManager <- function(version="latest") {
 
   # check internet connection
   is.offline <- inherits(
-    try(curl::nslookup("amap-dev.cirad.fr"), silent = TRUE),
+    try(curl::nslookup("forge.ird.fr"), silent = TRUE),
     "try-error")
 
   # list local versions
@@ -93,41 +93,39 @@ versionManager <- function(version="latest") {
 #'
 #' @docType methods
 #' @rdname getRemoteVersions
-#' @description List AMAPVox versions available for download from page
-#'   \url{https://amap-dev.cirad.fr/projects/amapvox/files}
+#' @description List AMAPVox versions available for download from AMAPVox Gitlab
+#'   package registry \url{https://forge.ird.fr/amap/amapvox/-/packages}
 #' @return a `data.frame` with 2 variables: `$version` that stores
 #'   the version number and `$url` the URL of the associated ZIP file.
 #' @seealso [getLocalVersions()]
 #' @export
 getRemoteVersions <- function() {
 
-  # read AMAPVox download page
-  downloadPage <- try(
-    rvest::read_html("https://amap-dev.cirad.fr/projects/amapvox/files"),
-    silent = TRUE)
-  # handle read_html failure
-  if (inherits(downloadPage, "try-error")) {
-    stop(paste("AMAPVox download page is unreachable",
-            "(https://amap-dev.cirad.fr/projects/amapvox/files).",
-            "Please check your internet connexion or try again later."),
-         call. = FALSE)
-  }
+  # get list of packages
+  url <- "https://forge.ird.fr/api/v4/projects/421/packages?package_type=generic"
+  req <- curl::curl_fetch_memory(url)
+  pkgs <- jsonlite::fromJSON(jsonlite::prettify(rawToChar(req$content)))
 
-  # extract all download files from HTML document
-  files <- downloadPage %>%
-    rvest::html_element("table") %>%
-    rvest::html_nodes(".filename") %>%
-    rvest::html_element("a") %>%
-    rvest::html_attr("href")
-  # extract AMAPVox zip files only
-  url <- paste0("https://amap-dev.cirad.fr",
-                grep("*AMAPVox-\\d+\\.\\d+\\.\\d+\\.zip$", files, value = TRUE))
-  # extract AMAPVox versions and sort them
-  version <- stringr::str_extract(url, "\\d+\\.\\d+\\.\\d+")
-  # create dataframe and sort it along version
-  zips <- data.frame(version, url)
+  # keep only AMAPVox packages
+  pkgs <- pkgs[pkgs$name == "amapvox", ]
+
+  # add url to list package files
+  url <- "https://forge.ird.fr/api/v4/projects/421/packages"
+  pkgs <- cbind(pkgs,
+                files_path=paste(url, pkgs$id, "package_files", sep="/"))
+
+  # list package files
+  zips <- data.table::rbindlist(apply(pkgs, 1, function(pkg) {
+    req <- curl::curl_fetch_memory(pkg$files_path)
+    pkg.files <- jsonlite::fromJSON(jsonlite::prettify(rawToChar(req$content)))
+    return( data.table::data.table(version=pkg$version, file_name=pkg.files$file_name) )
+  }))
+  url <- "https://forge.ird.fr/api/v4/projects/421/packages/generic/amapvox"
+  version <- file_name <- NULL # trick to avoid "no visible binding" note
+  zips[, url:=paste(url, version, file_name, sep="/")][, file_name:=NULL]
+
+  # sort versions
   zips <- zips[orderVersions(zips$version),]
-  rownames(zips) <- NULL
   # return dataframe
   return(zips)
 }
@@ -309,11 +307,18 @@ installVersion <- function(version, overwrite = FALSE) {
     file.path(rappdirs::user_data_dir("AMAPVox"), "bin"),
     mustWork = FALSE)
   versionPath <- normalizePath(
-    file.path(binPath, paste0("AMAPVox-", version)),
+    file.path(binPath, ifelse(is_v1(version),
+                              paste0("AMAPVox-", version),
+                              paste0("AMAPVox-", version, "-", get_os()))),
     mustWork = FALSE)
   # check whether requested version already installed
+  jar.dir <- ifelse(is_v1(version),
+                    versionPath,
+                    ifelse(get_os() == "windows",
+                           file.path(versionPath, "app"),
+                           file.path(versionPath, "lib", "app")))
   jarPath <- normalizePath(
-    file.path(versionPath, paste0("AMAPVox-", version, ".jar")),
+    file.path(jar.dir, paste0("AMAPVox-", version, ".jar")),
     mustWork = FALSE)
   if (file.exists(jarPath) & !overwrite) {
     message(paste("AMAPVox", version, "already installed in", versionPath))
@@ -321,9 +326,18 @@ installVersion <- function(version, overwrite = FALSE) {
   }
   # url to download
   url <- remoteVersions$url[which(remoteVersions == version)]
+  # from AMAPVox v2 OS specific binaries
+  if (!is_v1(version)) {
+    # specific URL depending on OS
+    url <- url[which(grepl(get_os(), url))]
+    # unsupported OS
+    if (url == '')
+      stop("Unsupported OS (", get_os(),
+           ") Sorry! Email contact@amapvox.org to request specific binaries.")
+  }
   # local destination
   zipfile <- normalizePath(
-    file.path(binPath, paste0("AMAPVox-", version, ".zip")),
+    file.path(binPath, basename(url)),
     mustWork = FALSE)
   # create local bin folder if does not exist
   if (!dir.exists(binPath)) dir.create(binPath, recursive = TRUE,
@@ -331,7 +345,10 @@ installVersion <- function(version, overwrite = FALSE) {
   # download zip
   utils::download.file(url, zipfile, method = "auto", mode="wb", timeout=300)
   # unzip
-  utils::unzip(zipfile, exdir = versionPath)
+  utils::unzip(zipfile,
+               # for linux-like system uses system unzip that should preserve file permissions
+               unzip = ifelse(get_os() == "windows", "internal", getOption("unzip")),
+               exdir = ifelse(is_v1(version), versionPath, binPath))
   # delete zip file
   file.remove(zipfile)
   message(paste("AMAPVox", version, "successfully installed in", versionPath))
@@ -374,4 +391,28 @@ removeVersion <- function(version) {
     message(paste("Failed to delete folder", path,
                   ", you may have to do so manually..."))
   }
+}
+
+# get operating system 'windows', 'linux', 'osx'
+get_os <- function() {
+  sysinf <- Sys.info()
+  if (!is.null(sysinf)){
+    os <- sysinf['sysname']
+    if (os == 'Darwin')
+      os <- "osx"
+  } else { ## mystery machine
+    os <- .Platform$OS.type
+    if (grepl("^darwin", R.version$os))
+      os <- "osx"
+    if (grepl("linux-gnu", R.version$os))
+      os <- "linux"
+  }
+  tolower(os)
+}
+
+# check whether given version is v1
+# does not even check whether it is a valid version, assuming it has been
+# tested already
+is_v1 <- function(version) {
+  return(compVersion(version, "2.0.0") < 0)
 }

@@ -17,19 +17,19 @@ library(AMAPVox)
 ## ----eval=FALSE---------------------------------------------------------------
 #  AMAPVox::run()
 
-## -----------------------------------------------------------------------------
-? AMAPVox::run # section "Java 1.8 64-Bit with JavaFX"
+## ----eval=FALSE---------------------------------------------------------------
+#  ? AMAPVox::run # section "Java 1.8 64-Bit with JavaFX"
 
-## -----------------------------------------------------------------------------
-AMAPVox::getRemoteVersions()
+## ----eval=FALSE---------------------------------------------------------------
+#  AMAPVox::getRemoteVersions()
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  AMAPVox::installVersion("1.7.6")
 #  # install and run specific version
 #  AMAPVox::run("1.6.4", check.update = FALSE)
 
-## -----------------------------------------------------------------------------
-AMAPVox::getLocalVersions()
+## ----eval=FALSE---------------------------------------------------------------
+#  AMAPVox::getLocalVersions()
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  AMAPVox::removeVersion("1.7.6")

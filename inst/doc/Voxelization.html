@@ -355,34 +355,57 @@ configuration.</p>
 <div id="semantics" class="section level2">
 <h2>Semantics</h2>
 <p>Every field has its own jargon, LiDAR is no exception. Throughout the
-documents we will use different terms</p>
+documents we will use different terms:</p>
 <ul>
 <li>a shot or a pulse refers to a single light pulse going out from the
-laser. A shot is defined by an origin, a direction, a time</li>
+laser. A shot is defined by an origin, a direction, a time and zero, one
+or more hits.</li>
 <li>a hit or and echo occurs when the light beam hits and obstacle and
 returns some light that is recorded by the laser. It is associated to a
 pulse and there may be no hit, a single hit or multiple hits. Be aware
 that absence of hit does not mean that there were no obstacle on the
 way: the light might have been diffracted or the laser failed to record
-the signal. we will refert to that situation as a “false empty shot”.
+the signal. We will refer to that situation as a “false empty shot”.
 Conversely a hit may not always indicate that the light beam hit some
 vegetation (see section Butterfly remover for instance).</li>
-<li>free path <span class="citation">@Todo</span></li>
-<li>free path length <span class="citation">@Todo</span></li>
-<li>path length <span class="citation">@Todo</span></li>
+<li>free path is the path from the shot origin to the hit. In a voxel,
+the free path refers to the path from the voxel entering point to the
+hit.</li>
+<li>free path length is the length in meter of the free path</li>
+<li>path length refers to the length of the path from the voxel entering
+point to the voxel exiting point, whether or not the pulse has been
+intercepted.</li>
 </ul>
 </div>
-<div id="als-input" class="section level2">
-<h2>ALS input</h2>
-<div id="supported-formats" class="section level3">
-<h3>Supported formats</h3>
+<div id="lidar-scans" class="section level2">
+<h2>LiDAR scans</h2>
+<div id="laslaz-point-cloud" class="section level3">
+<h3>LAS/LAZ point cloud</h3>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/LAS_file_format">LAS</a> file
 format;</li>
 <li>LAZ file format (compressed LAS);</li>
-<li>SHT format, home brew “shot” format, see details below.</li>
 </ul>
 <p><em>LAS/LAZ</em> files can be manipulated by the <a href="http://lastools.org/">LAStools</a> software or the <a href="https://CRAN.R-project.org/package=lidR">LidR</a> R package.</p>
+<p>AMAPVox rebuilds shots geometry from LAS/LAZ point clouds.</p>
+<p><em>Consistency checks</em>: AMAPVox can perform preliminary checks
+on the LAS/LAZ data, prior to the voxelization.</p>
+<p>First, it suggests to discard shots with inconsistent number of
+echoes or ranks. It check whether a subset of LAS points with same GPS
+time is consistent in terms of echo rank and number of echoes. Every LAS
+point of the subset should have a unique echo rank and the same number
+of echoes.</p>
+<p>Secondly, it may discard shots whose echoes are not collinear. The
+maximal deviation, user defined, is a tolerance in degree to strict
+collinearity.</p>
+<p>Theses checks are not mandatory but inconsistent shots will most
+likely lead to errors in the voxelization process. It is advised to
+enable them both in a first run just to make sure the point cloud is
+“clean” and then disable them since it is time consuming and pointless
+to perform the checks every time.</p>
+</div>
+<div id="text-shot-format" class="section level3">
+<h3>Text SHOT format</h3>
 <p><em>SHT or SHOT format</em> is a text based format, one shot per
 line, a shot being defined by an origin, a direction, the number of
 echoes and the echo ranges.</p>
@@ -391,10 +414,34 @@ echoes and the echo ranges.</p>
 x0 y0 z0 xd yd zd 1 10
 etc.</code></pre>
 </div>
-<div id="trajectory-file" class="section level3">
-<h3>Trajectory file</h3>
-<p>For LAS and LAZ file, you need to provide a <em>trajectory
-file</em>.</p>
+<div id="riegl-scans" class="section level3">
+<h3>RIEGL scans</h3>
+<ul>
+<li>RiSCAN single scan, RXP file format. A proprietary binary file
+format owned by RIEGL. Can be edited with RiSCAN Pro software.</li>
+<li>RiSCAN project, RSP file format. An aggregation of RXP scans in the
+same folder with an XML file project.xml that lists the file paths of
+the single scans, the SOP and POP matrix (see section Transformation for
+details on the transformation matrix)</li>
+</ul>
+</div>
+<div id="leica-formats" class="section level3">
+<h3>LEICA formats</h3>
+<ul>
+<li>PTX / PTG file formats from LEICA Geosystems.</li>
+</ul>
+</div>
+<div id="faro-formats" class="section level3">
+<h3>FARO formats</h3>
+<ul>
+<li>XYB from FARO</li>
+</ul>
+</div>
+</div>
+<div id="trajectory-file-laslaz" class="section level2">
+<h2>Trajectory file (LAS/LAZ)</h2>
+<p>For LAS and LAZ file, you need to provide either a fixed scanner
+position or a <em>trajectory file</em>.</p>
 <p>A trajectory file is a text based format that contains GPS positions
 of the scanner at a given time. Four columns are expected:</p>
 <ul>
@@ -422,52 +469,14 @@ skip, etc.</p>
 289108.659 586267.447 504.838 308500.018526
 etc.</code></pre>
 </div>
-<div id="als-consistency-checks" class="section level3">
-<h3>ALS consistency checks</h3>
-<p>AMAPVox can perform preliminary checks on the ALS data, prior to the
-voxelization.</p>
-<p>First, it suggests to discard shots with inconsistent number of
-echoes or ranks. It check whether a subset of LAS points with same GPS
-time is consistent in terms of echo rank and number of echoes. Every LAS
-point of the subset should have a unique echo rank and the same number
-of echoes.</p>
-<p>Secondly, it may discard shots whose echoes are not collinear. The
-maximal deviation, user defined, is a tolerance in degree to strict
-collinearity.</p>
-<p>Theses checks are not mandatory but inconsistent shots will most
-likely lead to errors in the voxelization process. It is advised to
-enable them both in a first run just to make sure the point cloud is
-“clean” and then disable them since it is time consuming and pointless
-to perform the checks every time.</p>
-</div>
-<div id="export-laslaz-file-to-shot-file" class="section level3">
-<h3>Export LAS/LAZ file to SHOT file</h3>
-<p>The button “Export ALS point cloud to lidar shots” converts LAS/LAZ
-file into the text based SHT format described above. It could be
-convenient to do so in terms of performance:</p>
-<ul>
-<li>your point cloud is cluttered with many inconsistent shots so you
-generate a cleaned-up data set.</li>
-<li>if you plan to run many vozelization experiments with the same data
-set, then you skip reconstructing the shot geometry every time,</li>
-</ul>
-</div>
-</div>
-<div id="tls-input" class="section level2">
-<h2>TLS input</h2>
-<div id="supported-formats-1" class="section level3">
-<h3>Supported formats</h3>
-<ul>
-<li>RiSCAN single scan, RXP file format. A proprietary binary file
-format owned by RIEGL. Can be edited with RiSCAN Pro software.</li>
-<li>RiSCAN project, RSP file format. An aggregation of RXP scans in the
-same folder with an XML file project.xml that lists the file paths of
-the single scans, the SOP and POP matrix (see section Transformation for
-details on the transformation matrix)</li>
-<li>PTX / PTG file formats from LEICA Geosystems.</li>
-<li>XYB from FARO</li>
-</ul>
-</div>
+<div id="digital-terrain-model-input" class="section level2">
+<h2>Digital Terrain Model input</h2>
+<p>Digital Terrain Model is optional. If provided it will be used to
+compute distance to ground. Required if DTM filter (section Filter &gt;
+DTM filter) or Ground energy output (section Output &gt;
+Post-processing) are enabled.</p>
+<p>Expected format: <a href="https://gdal.org/drivers/raster/aaigrid.html#raster-aaigrid">AAIGrid
+– Arc/Info ASCII Grid</a> No data values must be a numeric.</p>
 </div>
 <div id="output-parameters" class="section level2">
 <h2>Output parameters</h2>
@@ -505,19 +514,91 @@ file formats in annexe), or by choosing a Riscan Pro project file.</p>
 </div>
 <div id="voxel-space" class="section level2">
 <h2>Voxel space</h2>
-<p><span class="citation">@Todo</span></p>
+<p>Defines geographical extent and spatial resolution of the voxelized
+space. The geographical extent is a 3-dimensional rectangular cuboid,
+defined by (x, y, z) min and max coordinates. Spatial resolution is a
+(x, y, z) unitary vector giving the dimensions of a single voxel. A
+voxel is a rectangular cuboid and most commonly a cube. Voxel size is a
+critical parameter for estimating plant area density. It must be small
+enough so that the hypothesis of the vegetation being homogeneously
+distributed within the voxel holds true. But it must be large enough to
+include enough points to ensure reliable attenuation/PAD
+estimations.</p>
 </div>
 <div id="filtering" class="section level2">
 <h2>Filtering</h2>
-<p><span class="citation">@Todo</span></p>
+<div id="digital-terrain-model-filter" class="section level3">
+<h3>Digital Terrain Model filter</h3>
+<p>Digital Terrain Model filter discards every point that are below a
+given distance to the ground (the Offset parameter in meter). Enabling
+this filter implies that a Digital Terrain Model has been provided in
+the Input section.</p>
+</div>
+<div id="shot-decimation" class="section level3">
+<h3>Shot decimation</h3>
+<p>Randomly downsample the scan by a float factor M ranging inside [0,
+1[, the decimation factor. M = 0 means no shot discarded, M = 0.1 means
+10% of the shots discarded, etc.</p>
+</div>
+<div id="shot-angle-filter" class="section level3">
+<h3>Shot angle filter</h3>
+<p>Filter shots based on shot Zenith angle (also called polar angle) in
+degrees, i.e angle between zenith (origin at the ground) and shot
+direction.</p>
+</div>
+<div id="false-empty-shot" class="section level3">
+<h3>False empty shot</h3>
+<p>Riegl TLS scanners may include artifical empty shots for objects too
+close to the sensor (around 1m). This option allows to remove those
+“false” empty shots.</p>
+</div>
+<div id="point-cloud-filter" class="section level3">
+<h3>Point cloud filter</h3>
+<p>Discard or retain subset of points from the input point cloud for the
+voxelization. For instance it allows to extract a tree from a forest
+patch or remove the wood of a tree to estimate leaf area density instead
+of plant area density. The point cloud is provided as a text file with 3
+columns x, y, z the coordinates of the points.</p>
+</div>
+<div id="echo-attribute-filter" class="section level3">
+<h3>Echo attribute filter</h3>
+<p>For RIEGL scans only, filter echoes based on reflectance, amplitude
+or deviation values.</p>
+</div>
+<div id="classification-filter" class="section level3">
+<h3>Classification filter</h3>
+<p>For LAS/LAZ only, filter echoes based on LAS classification. By
+default discard class “2 - Ground”.</p>
+</div>
 </div>
 <div id="weighting" class="section level2">
 <h2>Weighting</h2>
-<p><span class="citation">@Todo</span></p>
+<p>For multi-echoes sans, the weighting table defines energy attenuation
+for every hit of a pulse. AMAPVox calculates the amount of light
+entering, intercepted and exiting the voxels to derive attenuation and
+plant area density estimators. A partial hit implies that some light is
+intercepted and some light carries on. This information is sometimes
+provided in the scans as the returned intensity, but we have not find
+yet an approach that works in every situation (work in progress).
+Providing a statistical model of energy attenuation as a function of the
+return rank is an other option, not straightforward though. <a href="https://doi.org/10.1016/j.rse.2017.05.034">Vincent et al.,
+2017</a> and <a href="https://doi.org/10.1016/j.rse.2022.113442">Vincent
+et al., 2022</a> discuss pros and cons of both approaches.</p>
+<p>As for now (2022), we consider that the best default option is to
+assume that the energy is evenly distributed among every hit of a pulse.
+Hence the suggested default weighting table with equal weights summing
+up to one for every pulse. The table remains editable for advanced users
+who would rather apply custom statistical model that fits better their
+data.</p>
+<p>No weighting table means that AMAPVox will only take into account the
+first return of a pulse. Exploratory approach “most intense return” has
+been implemented but not released. Fee free to request binaries for
+testing purpose.</p>
 </div>
 <div id="scanner" class="section level2">
 <h2>Scanner</h2>
 <p>Either user predefined laser specifications or define custom
+specifications. Please contact us to include permanently your scanner
 specifications.</p>
 </div>
 
