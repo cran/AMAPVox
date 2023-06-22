@@ -366,18 +366,18 @@ only.</p>
 <div id="amapvox-r-package" class="section level2">
 <h2>AMAPVox R package</h2>
 <p>Install AMAPVox package latest stable version from source:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install &quot;remotes&quot; package if not already installed</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">any</span>(<span class="fu">grepl</span>(<span class="st">&quot;remotes&quot;</span>, <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())))) <span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># install latest stable version from source</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&#39;umr-amap/AMAPVox&#39;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load AMAPVox package</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(AMAPVox)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># install &quot;remotes&quot; package if not already installed</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">any</span>(<span class="fu">grepl</span>(<span class="st">&quot;remotes&quot;</span>, <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())))) <span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co"># install latest stable version from source</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&#39;umr-amap/AMAPVox&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># load AMAPVox package</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(AMAPVox)</span></code></pre></div>
 </div>
 <div id="amapvox-gui" class="section level2">
 <h2>AMAPVox GUI</h2>
 <p>Install and run latest AMAPVox GUI (with active internet
 connection)</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">run</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">run</span>()</span></code></pre></div>
 After downloading latest version, AMAPVox GUI should start
 automatically:
 <center>
@@ -385,17 +385,17 @@ automatically:
 </center>
 <p>For AMAPVox &lt;= 1.10, if you get error(s) about java version,
 please read help page</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>? AMAPVox<span class="sc">::</span>run <span class="co"># section &quot;Java 1.8 64-Bit with JavaFX&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>? AMAPVox<span class="sc">::</span>run <span class="co"># section &quot;Java 1.8 64-Bit with JavaFX&quot;</span></span></code></pre></div>
 <p>List available remote versions:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">getRemoteVersions</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">getRemoteVersions</span>()</span></code></pre></div>
 <p>Install specific version:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">installVersion</span>(<span class="st">&quot;1.7.6&quot;</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install and run specific version</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">run</span>(<span class="st">&quot;1.6.4&quot;</span>, <span class="at">check.update =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">installVersion</span>(<span class="st">&quot;1.7.6&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co"># install and run specific version</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">run</span>(<span class="st">&quot;1.6.4&quot;</span>, <span class="at">check.update =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>List local versions:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">getLocalVersions</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">getLocalVersions</span>()</span></code></pre></div>
 <p>Uninstall local version:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">removeVersion</span>(<span class="st">&quot;1.7.6&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>AMAPVox<span class="sc">::</span><span class="fu">removeVersion</span>(<span class="st">&quot;1.7.6&quot;</span>)</span></code></pre></div>
 </div>
 
 

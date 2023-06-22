@@ -6,7 +6,7 @@ knitr::opts_chunk$set(
 
 ## ---- setup, echo=FALSE-------------------------------------------------------
 # libraries RefManageR
-require("RefManageR")  
+require("RefManageR", quietly = TRUE)  
 
 ## ---- echo=FALSE, eval=TRUE, results='asis'-----------------------------------
 bib <- RefManageR::ReadBib("rsc/amapvox-bibtex.bib")
