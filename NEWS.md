@@ -1,17 +1,84 @@
+# AMAPVox 2.4.2
+
+*2026-02-16*
+
+Bugfix: add `offline` option in R package AMAPVox::run function [#73](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/73)
+Bugfix: grant native access to javafx/graphics [#74](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/74)
+
+Released on CRAN
+
+# AMAPVox 2.4.1
+
+*2025-11-17*
+
+Bugfix: LAS shot construction no longer hangs when a LAS point’s GPS time matches the trajectory’s max time. [#71](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/71) & [#72](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/72). Thanks to Daniel K. for raising it!
+
+Not release on CRAN
+
+# AMAPVox 2.4.0
+
+*2025-07-16*
+
+New feature: support LAS extra-bytes variables for relative echo weight [#63](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/63)
+
+Not release on CRAN
+
+# AMAPVox 2.3.3
+
+*2025-01-21*
+
+Bugfix: updated laszip4j library to read compressed extra-bytes data [#55](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/55)
+Bugfix: default LAS time range max value set to integer zero [#56](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/56)
+
+Not release on CRAN
+
+# AMAPVox 2.3.2
+
+*2024-12-03*
+
+Bugfix: default lead area set to 50cm2 [#53](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/53)
+Bugfix: save dialog intial directory fail-safe [#54](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/54)
+New feature: added Trimble x7 laser specification [#12](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/12)
+
+Not release on CRAN
+
+# AMAPVox 2.3.1
+
+*2024-09-11*
+Bugfix: open and save dialog fail-safe [#51](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/51)
+
+Not released on CRAN
+
+# AMAPVox 2.3.0
+
+*2024-09-09*
+New feature: trajectory time span [#41](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/41)
+New feature: optional normalization for relative echo weight [#50](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/50)
+New feature: user-defined Plant Area Density variable and Leaf Angle Distribution in canopy tools [#40](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/40), [#49](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/49)
+New feature: AMAPVox::plot3d axis can either be i, j, k or x, y, z [#47](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/47)
+Bugfix: removed differential reflectance between ground and vegation [#38](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/38)
+Bugfix: LAS points outside trajectory time span automatically discarded [#45](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/45)
+Bugfix: SOP, POP & VOP transformation matrix were always enabled [#42](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/42)
+Bugfix: erroneous Zmax value in voxel boundary quick search [#44](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/44)
+
+Not released on CRAN
+
 # AMAPVox 2.2.1
 
 *2024-03-15*
 Aligned R package version onto Java core version
-Updated binary packages URL (#31, #32)
-Bugfix in transmittance map tool (#37)
-Bugfix in XYB point cloud reader (#30)
+Updated binary packages URL [#31](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/31), [#32](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/32)
+Bugfix in transmittance map tool [#37](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/37)
+Bugfix in XYB point cloud reader [#30](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/30)
+
 Released on CRAN
 
 # AMAPVox 1.0.1
 
 *2023-06-19*
-Fixed issue #5, unzip failed on Windows and AMAPVox did not run.
+Fixed issue [#5](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/5), unzip failed on Windows and AMAPVox did not run.
 Deleted Java as System Requirement in DESCRIPTION (optional since AMAPVox binary 2.0)
+
 Released on CRAN
 
 # AMAPVox 1.0.0
@@ -29,7 +96,7 @@ Not released on CRAN.
 # AMAPVox 0.12.1
 
 *2022-12-05*
-Fixed issue #2 with data.table.merge
+Fixed issue [#2](https://forge.ird.fr/amap/amapvox/AMAPVox/-/issues/2) with data.table.merge
 Released on CRAN.
 
 # AMAPVox 0.12.0

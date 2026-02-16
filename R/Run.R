@@ -14,7 +14,7 @@
 #' @section Java 8 64-Bit: AMAPVox versions equal or prior to 1.10 rely on
 #'   Java/JavaFX 64-Bit. It must be installed on the Operating System before
 #'   running AMAPVox. In practice it requires either [Java 8 64-Bit
-#'   Oracle](https://java.com/download/) or [Java 8 64-Bit
+#'   Oracle](https://www.java.com/en/download/manual.jsp) or [Java 8 64-Bit
 #'   Corretto](https://aws.amazon.com/fr/corretto/). Mind that OpenJDK 8 will
 #'   not work for AMAPVox GUI since JavaFX is not included in this distribution.
 #'   Nonetheless for AMAPVox in batch mode, any version of Java 64-bit >= 8
@@ -55,6 +55,7 @@
 #'   as available.
 #' @param stdout where output from both stdout/stderr should be sent. Same as
 #'   stdout & stderr options from function [system2()].
+#' @param offline ignore online versions.
 #' @seealso [getLocalVersions()], [getRemoteVersions()], [installVersion()] and
 #'   [removeVersion()]
 #' @examples
@@ -74,10 +75,11 @@ run <- function(version="latest",
                 xml,
                 java = "java", jvm.options = "-Xms2048m",
                 nt = 1, ntt = 1,
-                stdout = "") {
+                stdout = "",
+                offline = FALSE) {
 
   # handle versions
-  version <- versionManager(version)
+  version <- versionManager(version, offline)
 
   # no JVM options
   if(is.null(jvm.options)) jvm.options = ""
@@ -121,6 +123,7 @@ run <- function(version="latest",
                   paste(jvm.options, "-jar", jar.path),
                   paste(jvm.options,
                         "--add-opens javafx.graphics/javafx.scene=ALL-UNNAMED",
+                        "--enable-native-access=javafx.graphics",
                         "-jar", jar.path))
   } else {
     # AMAPVox batch mode

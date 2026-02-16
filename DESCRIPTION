@@ -1,7 +1,7 @@
 Type: Package
 Package: AMAPVox
 Title: LiDAR Data Voxelisation
-Version: 2.2.1
+Version: 2.4.2
 Authors@R: c(
     person("Grégoire", "Vincent", , "gregoire.vincent@ird.fr", role = "aut"),
     person("Julien", "Heurtebize", , "julienhtbe@gmail.com", role = "aut"),
@@ -30,10 +30,10 @@ Collate: 'AMAPVox.R' 'Butterfly.R' 'Canopy.R' 'Classes.R' 'ComputeG.R'
         'ReadVoxelSpace.R' 'VersionManager.R' 'Run.R' 'Utils-voxel.R'
         'WriteVoxelSpace.R'
 NeedsCompilation: no
-Packaged: 2024-03-15 15:58:49 UTC; pverley
+Packaged: 2026-02-16 12:44:52 UTC; pverley
 Author: Grégoire Vincent [aut],
   Julien Heurtebize [aut],
   Philippe Verley [aut, cre]
 Maintainer: Philippe Verley <philippe.verley@ird.fr>
 Repository: CRAN
-Date/Publication: 2024-03-15 22:30:21 UTC
+Date/Publication: 2026-02-16 13:10:09 UTC
